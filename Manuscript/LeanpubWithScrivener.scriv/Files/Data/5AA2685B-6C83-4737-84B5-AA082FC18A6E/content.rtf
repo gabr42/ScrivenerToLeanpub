@@ -1,0 +1,39 @@
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fmodern\fcharset0\fprq2 Calibri;}{\f1\fnil\fcharset0\fprq2 Calibri-Italic;}{\f2\fnil\fcharset0\fprq2 Consolas;}}{\colortbl ;\red0\green0\blue0 ;\red255\green255\blue255 ;\red128\green128\blue128 ;}\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\fet2\ftnbj\aenddoc\pgnrestart\pgnstarts0\pard\plain\tx0\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl262\slmult1\ltrch\loch{\f0\fs26\b0\i0
+\{#appendix_autoNumbering_bibliography\}}
+\par\plain\f0\fs26\b0\i0
+\par\pard\plain\tx0\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl262\slmult1\ltrch\loch{\f0\fs26\b0\i0 In a general terms, creating a bibliography for a book is similar to creating a list of figures or tables. You create a template, mark it with the <$Scr_Cs::0>}{\f1\fs26\i1
+[scriv4lean] Bibliography<!$Scr_Cs::0>}{\f0\fs26\b0\i0  style and you\loch\af0\hich\af0\dbch\af0 \rquote re done. The difference, however, is that in this case the template is more complicated.}
+\par\plain\f0\fs26\b0\i0
+\par\plain{\f0\fs26\b0\i0 Each entry in a BibTeX file has a specific <$Scr_Cs::0>}{\f1\fs26\i1 type<!$Scr_Cs::0>}{\f0\fs26\b0\i0 . The following excerpt from the `scriv4lean.bib` bibliography file for this book shows two entries \hich\f0\emdash\loch\f0  a web site (`@misc`) describing the BibTeX format and a book (@book) about the Markua.}
+\par\plain\f0\fs26\b0\i0
+\par\pard\plain\tx0\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\li720\fi-360\sl262\slmult1\ltrch\loch{\f2\fs22\b0\i0 <$Scr_Ps::1><!$Scr_Ps::1><$Scr_Ps::2>}
+\par\pard\plain\tx720\tx1080\tx1440\tx1800\tx2160\li720\ltrch\loch{\f2\fs22\b0\i0 \{format: text, line-numbers: false\}}
+\par\plain{\f2\fs22\b0\i0 @misc\{BibtexFormat,}
+\par\plain{\f2\fs22\b0\i0 author = \{Feder, Alexander\},}
+\par\plain{\f2\fs22\b0\i0 title = \{\{BibTeX Format Description\}\},}
+\par\plain{\f2\fs22\b0\i0 url = \{http://www.bibtex.org/Format/\},}
+\par\plain{\f2\fs22\b0\i0 urldate = \{2019-05-26\},}
+\par\plain{\f2\fs22\b0\i0 year = \{2006\}}
+\par\plain{\f2\fs22\b0\i0 \}}
+\par\plain{\f2\fs22\b0\i0 @book\{Armstrong2019a,}
+\par\plain{\f2\fs22\b0\i0 author = \{Armstrong, Peter\},}
+\par\plain{\f2\fs22\b0\i0 publisher = \{LeanPub\},}
+\par\plain{\f2\fs22\b0\i0 title = \{\{The Markua Manual\}\},}
+\par\plain{\f2\fs22\b0\i0 url = \{https://leanpub.com/markua\},}
+\par\plain{\f2\fs22\b0\i0 year = \{2019\}}
+\par\plain{\f2\fs22\b0\i0 \}<!$Scr_Ps::2>}
+\par\pard\plain\tx0\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl262\slmult1\ltrch\loch\f0\fs26\b0\i0
+\par\plain{\f0\fs26\b0\i0 When you write a bibliography template, you have to create separate template for each type you are using. This book cites only other books and web sites so I only had to create templates for the `book` and `misc` types, as shown here:}
+\par\plain\f0\fs26\b0\i0
+\par\pard\plain\tx720\tx1080\tx1440\tx1800\tx2160\li720\ltrch\loch{\f2\fs22\b0\i0 <$Scr_Ps::2>\{format: text, line-numbers: false\}}
+\par\plain{\f2\fs22\b0\i0 book=**@citationKey@**}
+\par\plain{\f2\fs22\b0\i0 : @author@, @year@, *@title@*. [@publisher@. ][Available at <@url@>.]}
+\par\plain{\f2\fs22\b0\i0 .}
+\par\plain{\f2\fs22\b0\i0 misc=**@citationKey@**}
+\par\plain{\f2\fs22\b0\i0 : *@title@*, <@url@> (Accessed: @urldate@).}
+\par\plain{\f2\fs22\b0\i0 .<!$Scr_Ps::2>}
+\par\pard\plain\tx0\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl262\slmult1\ltrch\loch\f2\fs22\b0\i0
+\par\plain{\f0\fs26\b0\i0 Each entry starts with an introductory `type=` (`book=`, and `misc=`). The template then continues with a mix of <$Scr_Cs::0>}{\f1\fs26\i1 fields<!$Scr_Cs::0>}{\f0\fs26\b0\i0  (`@author@`, `@year@`, `@title@` \loch\af0\hich\af0\dbch\af0
+\u8230?) and Markua formatting. Fields are replaced with the corresponding field values from the BibTeX file. The @citationKey@ is replaced with the entry\rquote s citation key (`BibtexFormat` in the first example and `Armstrong2019a` in the second example above).}
+\par\plain\f0\fs26\b0\i0
+\par\plain{\f0\fs26\b0\i0 Definitions for different type follow each other. A line with just a dot in it is changed into an empty line on export.}}

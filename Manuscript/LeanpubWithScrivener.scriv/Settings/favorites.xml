@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Favorites Version="1.0">
+    <MoveTo>
+        <Recent>
+            <UUID Date="2019-02-12 22:34:58 +0200">996300E7-0C6E-4AF1-B92B-255DDDCB5C21</UUID>
+            <UUID Date="2019-06-18 19:13:02 +0200">289090B7-0BB9-4417-A491-BB67D9B9B094</UUID>
+        </Recent>
+        <Popular>
+            <UUID Used="11" Date="2019-06-18 19:13:02 +0200">289090B7-0BB9-4417-A491-BB67D9B9B094</UUID>
+            <UUID Used="1" Date="2019-02-12 22:34:58 +0200">996300E7-0C6E-4AF1-B92B-255DDDCB5C21</UUID>
+        </Popular>
+    </MoveTo>
+    <Append>
+        <Recent/>
+        <Popular/>
+    </Append>
+</Favorites>
