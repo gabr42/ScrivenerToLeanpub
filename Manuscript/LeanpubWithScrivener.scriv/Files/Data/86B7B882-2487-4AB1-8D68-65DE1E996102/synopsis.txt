@@ -1,1 +1,0 @@
-"Outline" section is not included in compile by default and is associated with an "outline" icon.
