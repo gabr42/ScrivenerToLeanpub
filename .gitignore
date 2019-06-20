@@ -56,6 +56,6 @@ __history/
 # Castalia statistics file
 *.stat
 
-Manuscript/LeanpubWithScrivener\.bak\.zip
-
+# Scrivener files
 Manuscript/LeanpubWithScrivener\.scriv/Files/user\.lock
+*.bak.zip
