@@ -58,4 +58,4 @@ __history/
 
 # Scrivener files
 Manuscript/LeanpubWithScrivener\.scriv/Files/user\.lock
-*.bak.zip
+*.bak*.zip
