@@ -1,4 +1,4 @@
-This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Attribution 4.0 International License</a> (CC BY 4.0).
+This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a> (CC BY 4.0).
 
 This is a human-readable summary of (and not a substitute for) the license. 
 
