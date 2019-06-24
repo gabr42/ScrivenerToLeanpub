@@ -10,6 +10,7 @@ type
     function  CreateBibliography(const template: TArray<string>;
       orderByAppearance: boolean): TArray<string>;
     function  GetCitationNumber(const citationKey: string): integer;
+    function  GetCitationURL(const citationKey: string): string;
     function  HasCitation(const citationKey: string; var citationAnchor: string): boolean;
     function  Read(const fileName: string): boolean;
   end; { IBibTeX }
@@ -47,7 +48,9 @@ type
   end; { TBibTeXItem }
 
   TBibTeX = class(TErrorBase, IBibTeX)
-  strict private
+  strict private const
+    CURLTag = 'url';
+  var
     FCitationOrder     : TStringList;
     FConditionalMatcher: TRegEx;
     FFormat            : IFormat;
@@ -55,7 +58,7 @@ type
     FReader            : IReader;
     FTagMatcher        : TRegEx;
   strict protected
-    function AllTagsHaveValues(const tags: TMatchCollection; const item: TBibTeXItem):
+    function  AllTagsHaveValues(const tags: TMatchCollection; const item: TBibTeXItem):
       boolean;
     function  ApplyTemplate(const item: TBibTeXItem;
       const template: TArray<string>; useAppearanceIndex: boolean): TArray<string>;
@@ -75,6 +78,7 @@ type
     function  CreateBibliography(const template: TArray<string>;
       orderByUseIndex: boolean): TArray<string>;
     function  GetCitationNumber(const citationKey: string): integer;
+    function  GetCitationURL(const citationKey: string): string;
     function  HasCitation(const citationKey: string; var citationAnchor: string): boolean;
     function  Read(const fileName: string): boolean;
   end; { TBibTeX }
@@ -223,6 +227,16 @@ begin
     Result := FCitationOrder.Add(citationKey);
   Inc(Result);
 end; { BibTeX.GetCitationNumber }
+
+function TBibTeX.GetCitationURL(const citationKey: string): string;
+begin
+  Result := '';
+  for var item in FItems do
+    if SameText(item.CitationKey, citationKey) then begin
+      item.Tags.TryGetValue(CURLTag, Result);
+      Exit;
+    end;
+end; {BibTeX.GetCitationURL }
 
 function TBibTeX.HasCitation(const citationKey: string;
   var citationAnchor: string): boolean;

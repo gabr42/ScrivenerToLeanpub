@@ -30,12 +30,14 @@ uses
   S4L.References in 'S4L.References.pas',
   S4L.TODOWriter in 'S4L.TODOWriter.pas',
   S4L.Writer in 'S4L.Writer.pas',
-  S4L.Processor.Config in 'S4L.Processor.Config.pas';
+  S4L.Processor.Config in 'S4L.Processor.Config.pas',
+  S4L.URLChecker in 'S4L.URLChecker.pas';
 
 type
   TCommandLine = class
   strict private
     FBibTeXFile       : string;
+    FCheckURLs: boolean;
     FLeanpubFolder    : string;
     FNoCleanup        : boolean;
     FNumberCitations: boolean;
@@ -49,6 +51,8 @@ type
     property LeanpubFolder: string read FLeanpubFolder write FLeanpubFolder;
     [CLPPosition(3), CLPDescription('BibTeX bibliography file')]
     property BibTeXFile: string read FBibTeXFile write FBibTeXFile;
+    [CLPName('c'), CLPLongName('checkurls', 'checku'), CLPDescription('Check if all URLs in the book are accessible')]
+    property CheckURLs: boolean read FCheckURLs write FCheckURLs;
     [CLPName('n'), CLPLongName('nocleanup', 'noc'), CLPDescription('Disable markdown folder cleanup')]
     property NoCleanup: boolean read FNoCleanup write FNoCleanup;
     [CLPName('1'), CLPLongName('numbercitations', 'numbercit'), CLPDescription('Convert citation keys into numbers')]
@@ -82,6 +86,8 @@ begin
     Include(Result, TConvertOption.optNoCleanup);
   if commandLine.NumberCitations then
     Include(Result, TConvertOption.optNumberCitations);
+  if commandLine.CheckURLs then
+    Include(Result, TConvertOption.optCheckURLs);
 end; { MakeOptions }
 
 function ConvertOnce(commandLine: TCommandLine): boolean;

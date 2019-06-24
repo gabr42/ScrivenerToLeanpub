@@ -59,3 +59,5 @@ __history/
 # Scrivener files
 Manuscript/LeanpubWithScrivener\.scriv/Files/user\.lock
 *.bak*.zip
+
+scriv4lean/exe/scriv4lean_MemoryManager_EventLog\.txt

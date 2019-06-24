@@ -16,17 +16,20 @@ function CreateReferences: IReferences;
 implementation
 
 uses
+  WinApi.Windows,
   System.SysUtils;
 
 type
   TReferences = class(TInterfacedObject, IReferences)
+  public type
+    TItem = TPair<string,string>;
   strict private
-    FReferences: TList<TPair<string,string>>;
+    FReferences: TList<TItem>;
   public
     constructor Create;
     destructor  Destroy; override;
     procedure Add(const anchor, reference: string);
-    function  GetEnumerator: TEnumerator<TPair<string,string>>;
+    function  GetEnumerator: TEnumerator<TItem>;
   end; { TReferences }
 
 { exports }
@@ -41,7 +44,7 @@ end; { CreateReferences }
 constructor TReferences.Create;
 begin
   inherited Create;
-  FReferences := TList<TPair<string,string>>.Create;
+  FReferences := TList<TItem>.Create;
 end; { TReferences.Create }
 
 destructor TReferences.Destroy;
@@ -52,10 +55,10 @@ end; { TReferences.Destroy }
 
 procedure TReferences.Add(const anchor, reference: string);
 begin
-  FReferences.Add(TPair<string,string>.Create(anchor, reference));
+  FReferences.Add(TItem.Create(anchor, reference));
 end; { TReferences.Add }
 
-function TReferences.GetEnumerator: TEnumerator<TPair<string,string>>;
+function TReferences.GetEnumerator: TEnumerator<TItem>;
 begin
   Result := FReferences.GetEnumerator;
 end; { TReferences.GetEnumerator }

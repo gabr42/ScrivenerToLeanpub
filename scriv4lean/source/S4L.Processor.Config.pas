@@ -3,7 +3,7 @@ unit S4L.Processor.Config;
 interface
 
 type
-  TProcessorOption = (optNumberCitations);
+  TProcessorOption = (optNumberCitations, optCheckURLs);
   TProcessorOptions = set of TProcessorOption;
 
 implementation

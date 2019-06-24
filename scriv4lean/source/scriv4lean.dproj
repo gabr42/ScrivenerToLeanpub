@@ -5,7 +5,7 @@
         <FrameworkType>None</FrameworkType>
         <MainSource>scriv4lean.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Console</AppType>
@@ -82,7 +82,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
-        <Debugger_RunParams>/wait /numbercitations LeanpubWithScrivener.mmd\LeanpubWithScrivener.mmd manuscript bibliography\scriv4lean.bib</Debugger_RunParams>
+        <Debugger_RunParams>/checkurl /numbercitations /nocleanup LeanpubWithScrivener.mmd\LeanpubWithScrivener.mmd manuscript bibliography\scriv4lean.bib</Debugger_RunParams>
         <DCC_ExeOutput>..\exe</DCC_ExeOutput>
         <DCC_DcuOutput>..\dcu</DCC_DcuOutput>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -100,6 +100,8 @@
         <DCC_DcuOutput>..\dcu</DCC_DcuOutput>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>(None)</Manifest_File>
+        <Debugger_RunParams>/checkurl /numbercitations /nocleanup LeanpubWithScrivener.mmd\LeanpubWithScrivener.mmd manuscript bibliography\scriv4lean.bib</Debugger_RunParams>
+        <Debugger_CWD>H:\pisanje\knjige\Writing your next Leanpub bestseller with Scrivener\scrivener4leanpub</Debugger_CWD>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -129,6 +131,7 @@
         <DCCReference Include="S4L.TODOWriter.pas"/>
         <DCCReference Include="S4L.Writer.pas"/>
         <DCCReference Include="S4L.Processor.Config.pas"/>
+        <DCCReference Include="S4L.URLChecker.pas"/>
         <None Include="..\LeanpubWithScrivener.mmd"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -168,7 +171,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\scriv4lean.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\exe\scriv4lean.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>scriv4lean.exe</RemoteName>
                         <Overwrite>true</Overwrite>

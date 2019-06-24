@@ -452,6 +452,8 @@ begin
     if not Global.BibTeX.HasCitation(citationKey, anchor) then
       Inc(startPos, match.Length)
     else begin
+      if optCheckURLs in ProcessorState.Options then
+        Global.URLChecker.Add(Global.BibTeX.GetCitationURL(citationKey));
       if optNumberCitations in ProcessorState.Options then
         citationKey := Global.BibTeX.GetCitationNumber(citationKey).ToString;
       var citation := ProcessorState.Format.Reference('[' + citationKey + ']', anchor);
@@ -571,10 +573,16 @@ begin
        and anchor.EndsWith('>')
     then
       reference := match.Value
-    else if anchor.StartsWith('<') and anchor.EndsWith('>') then
-      reference := ProcessorState.Format.HttpReference(caption, Copy(anchor, 2, Length(anchor) - 2))
-    else if anchor.StartsWith('http:') or anchor.StartsWith('https:') then
-      reference := ProcessorState.Format.HttpReference(caption, anchor)
+    else if anchor.StartsWith('<') and anchor.EndsWith('>') then begin
+      reference := ProcessorState.Format.HttpReference(caption, Copy(anchor, 2, Length(anchor) - 2));
+      if optCheckURLs in ProcessorState.Options then
+        Global.URLChecker.Add(Copy(anchor, 2, Length(anchor) - 2));
+    end
+    else if anchor.StartsWith('http:') or anchor.StartsWith('https:') then begin
+      reference := ProcessorState.Format.HttpReference(caption, anchor);
+      if optCheckURLs in ProcessorState.Options then
+        Global.URLChecker.Add(anchor);
+    end
     else begin
       reference := ProcessorState.Format.Reference(caption, anchor);
       ProcessorState.References.Add(anchor, reference);
@@ -1465,10 +1473,11 @@ function TProcessor.CheckReferences: boolean;
 begin
   var errors := TList<string>.Create;
   try
-    for var reference in FProcessorState.References do begin
+    var reference := TPair<string,string>.Create('', ''); //workaround for a weird codegen bug in 10.3.1
+    for reference in FProcessorState.References do
       if not FProcessorState.Anchors.Has(reference.Key) then
         errors.Add('Reference not found: ' + reference.Value);
-    end;
+
     Result := errors.Count = 0;
     if not Result then
       SetError(string.Join(TPlatform.NewLineDelim, errors.ToArray));

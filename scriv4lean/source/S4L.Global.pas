@@ -4,7 +4,7 @@ interface
 
 uses
   System.Classes,
-  S4L.Reader, S4L.Writer, S4L.BibTeX;
+  S4L.Reader, S4L.Writer, S4L.BibTeX, S4L.URLChecker;
 
 type
   IGlobal = interface ['{5DD2FCB5-EF01-4612-88BA-48EAC0759EA0}']
@@ -13,11 +13,13 @@ type
     function  GetLeanpubManuscriptFolder: string;
     function  GetScrivenerFolder: string;
     function  GetScrivenerReader: IReader;
+    function  GetURLChecker: IURLChecker;
     procedure SetBibTeX(const value: IBibTeX);
     procedure SetContentWriter(const value: IWriter);
     procedure SetLeanpubManuscriptFolder(const value: string);
     procedure SetScrivenerFolder(const value: string);
     procedure SetScrivenerReader(const value: IReader);
+    procedure SetURLChecker(const value: IURLChecker);
   //
     property BibTeX: IBibTeX read GetBibTeX write SetBibTeX;
     property ContentWriter: IWriter read GetContentWriter write SetContentWriter;
@@ -26,6 +28,7 @@ type
     property ScrivenerFolder: string read GetScrivenerFolder write SetScrivenerFolder;
     property ScrivenerReader: IReader read GetScrivenerReader
       write SetScrivenerReader;
+    property URLChecker: IURLChecker read GetURLChecker write SetURLChecker;
   end; { IGlobal }
 
 function CreateGlobal: IGlobal;
@@ -40,17 +43,20 @@ type
     FLeanpubManuscriptFolder: string;
     FScrivenerFolder        : string;
     FScrivenerReader        : IReader;
+    FURLChecker             : IURLChecker;
   strict protected
     function  GetBibTeX: IBibTeX;
     function  GetContentWriter: IWriter;
     function  GetLeanpubManuscriptFolder: string;
     function  GetScrivenerFolder: string;
     function  GetScrivenerReader: IReader;
+    function  GetURLChecker: IURLChecker;
     procedure SetBibTeX(const value: IBibTeX);
     procedure SetContentWriter(const value: IWriter);
     procedure SetLeanpubManuscriptFolder(const value: string);
     procedure SetScrivenerFolder(const value: string);
     procedure SetScrivenerReader(const value: IReader);
+    procedure SetURLChecker(const value: IURLChecker);
   public
     property BibTeX: IBibTeX read GetBibTeX write SetBibTeX;
     property ContentWriter: IWriter read GetContentWriter write SetContentWriter;
@@ -59,6 +65,7 @@ type
     property ScrivenerFolder: string read GetScrivenerFolder write SetScrivenerFolder;
     property ScrivenerReader: IReader read GetScrivenerReader write
         SetScrivenerReader;
+    property URLChecker: IURLChecker read GetURLChecker write SetURLChecker;
   end; { TGlobal }
 
 { exports }
@@ -88,12 +95,17 @@ end; { TGlobal.GetLeanpubManuscriptFolder }
 function TGlobal.GetScrivenerFolder: string;
 begin
   Result := FScrivenerFolder;
-end;
+end; { TGlobal.GetScrivenerFolder }
 
 function TGlobal.GetScrivenerReader: IReader;
 begin
   Result := FScrivenerReader;
 end; { TGlobal.GetScrivenerReader }
+
+function TGlobal.GetURLChecker: IURLChecker;
+begin
+  Result := FURLChecker;
+end; { TGlobal.GetURLChecker }
 
 procedure TGlobal.SetBibTeX(const value: IBibTeX);
 begin
@@ -113,11 +125,16 @@ end; { TGlobal.SetLeanpubManuscriptFolder }
 procedure TGlobal.SetScrivenerFolder(const value: string);
 begin
   FScrivenerFolder := value;
-end;
+end; { TGlobal.SetScrivenerFolder }
 
 procedure TGlobal.SetScrivenerReader(const value: IReader);
 begin
   FScrivenerReader := value;
 end; { TGlobal.SetScrivenerReader }
+
+procedure TGlobal.SetURLChecker(const value: IURLChecker);
+begin
+  FURLChecker := value;
+end; { TGlobal.SetURLChecker }
 
 end.

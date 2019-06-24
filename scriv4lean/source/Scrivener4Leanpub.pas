@@ -6,7 +6,7 @@ uses
   S4L.Errors, S4L.Format;
 
 type
-  TConvertOption = (optNoCleanup, optNumberCitations);
+  TConvertOption = (optNoCleanup, optNumberCitations, optCheckURLs);
   TConvertOptions = set of TConvertOption;
 
   IScrivener4Leanpub = interface(IErrorBase)
@@ -24,7 +24,7 @@ uses
   System.SysUtils, System.Classes, System.IOUtils,
   S4L.Common, S4L.Reader, S4L.Writer, S4L.TODOWriter, S4L.Global, S4L.Processor,
   S4L.Anchors, S4L.Context, S4L.References, S4L.Images, S4L.Captions,
-  S4L.Macros, S4L.Format.Markua, S4L.BibTeX, S4L.Notes,
+  S4L.Macros, S4L.Format.Markua, S4L.BibTeX, S4L.Notes, S4L.URLChecker,
   S4L.Processor.Config;
 
 type
@@ -88,6 +88,9 @@ begin
       Exit(SetError('[BibTeX] ' + global.BibTeX.ErrorMsg));
   end;
 
+  if optCheckURLs in options then
+    Global.URLChecker := CreateURLChecker;
+
   bookWriter := CreateWriter(global.LeanpubManuscriptFolder + format.GetBookFileName, errMsg);
   if not assigned(bookWriter) then
     Exit(SetError(errMsg));
@@ -107,6 +110,11 @@ begin
   global.ContentWriter.Flush;
   global.ContentWriter := nil;
   global.ScrivenerReader := nil;
+
+  if assigned(global.URLChecker) then
+    if not global.URLChecker.CheckAll then
+      Exit(SetError(global.URLChecker.ErrorMsg));
+
   global := nil;
 
   warnings := processor.Warnings;
@@ -152,6 +160,8 @@ begin
   Result := [];
   if TConvertOption.optNumberCitations in options then
     Include(Result, TProcessorOption.optNumberCitations);
+  if TConvertOption.optCheckURLs in options then
+    Include(Result, TProcessorOption.optCheckURLs);
 end; { TScrivener4Leanpub.MapOptions }
 
 end.
