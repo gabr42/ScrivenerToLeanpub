@@ -203,13 +203,13 @@ begin
 
     var fileName := FGlobal.LeanpubManuscriptFolder + match.Groups[1].Value;
     reader := CreateReader(fileName, errMsg);
-    if not assigned(reader) then begin
-      AddProblem('Failed to open file ' + fileName + '. ' + errMsg);
-      Exit;
+    if not assigned(reader) then
+      replacement := ''
+    else begin
+      replacement := string.Join(#13, reader.GetAll);
+      if not replacement.EndsWith(#13) then
+        replacement := replacement + #13;
     end;
-    replacement := string.Join(#13, reader.GetAll);
-    if not replacement.EndsWith(#13) then
-      replacement := replacement + #13;
 
     Delete(Result, match.Index, match.Length);
     Insert(replacement, Result, match.Index);

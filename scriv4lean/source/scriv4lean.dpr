@@ -37,10 +37,10 @@ type
   TCommandLine = class
   strict private
     FBibTeXFile       : string;
-    FCheckURLs: boolean;
+    FCheckURLs        : boolean;
     FLeanpubFolder    : string;
     FNoCleanup        : boolean;
-    FNumberCitations: boolean;
+    FNumberCitations  : boolean;
     FScrivenerMMD     : string;
     FServerMode       : boolean;
     FWaitUntilModified: boolean;
