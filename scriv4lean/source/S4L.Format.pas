@@ -8,7 +8,7 @@ type
   {$SCOPEDENUMS OFF}
 
   IFormat = interface ['{87EFFA62-380B-45BF-8479-6F7052569848}']
-    function Anchor(const name: string): string;
+    function Anchor(const name: string; const attributes: string = ''): string;
     function BookPartDelimiter(part: BookPart): TArray<string>;
     function CenteredCaption(const caption: string): TArray<string>;
     function Chapter(const name: string): string;

@@ -734,6 +734,7 @@ begin
   var anchor := MakeAnchor(filteredLine);
 
   var nextLine: string;
+  var attributes := '';
   if GetLine(nextLine) then begin
     nextLine := Trim(nextLine);
     if nextLine.StartsWith('{#') and nextLine.EndsWith('}') then begin
@@ -742,6 +743,10 @@ begin
       ProcessorState.Macros.Process(macro);
       ProcessorState.Macros.RecordSpecialAnchor(anchor);
     end
+    else if SameText(nextLine, '{exercise}')
+         or SameText(nextLine, '{quiz}')
+    then
+      attributes := Copy(nextLine, 2, Length(nextLine) - 2)
     else
       Global.ScrivenerReader.PushBack(nextLine);
   end;
@@ -750,7 +755,7 @@ begin
     AddWarning(ProcessorState.Anchors.ErrorMsg);
 
   Global.ContentWriter.WriteLine([
-    ProcessorState.Format.Anchor(anchor),
+    ProcessorState.Format.Anchor(anchor, attributes),
     ProcessorState.Format.Chapter(filteredLine)]);
   Global.ContentWriter.WriteLine('');
   ProcessorState.Context.Add(filteredLine, 1 + IfThen(ProcessorState.PartCount > 0, 1, 0));
@@ -900,6 +905,7 @@ begin
 
     var anchor := MakeAnchor(heading);
     var nextLine: string; { TODO : This code has lots in common with TBaseChapterProcessor.StartChapter - unify }
+    var attributes := '';
     if GetLine(nextLine) then begin
       nextLine := Trim(nextLine);
       if nextLine.StartsWith('{#') and nextLine.EndsWith('}') then begin
@@ -908,12 +914,16 @@ begin
         ProcessorState.Macros.Process(macro);
         ProcessorState.Macros.RecordSpecialAnchor(anchor);
       end
+      else if SameText(nextLine, '{exercise}')
+           or SameText(nextLine, '{quiz}')
+      then
+        attributes := Copy(nextLine, 2, Length(nextLine) - 2)
       else
         Global.ScrivenerReader.PushBack(nextLine);
     end;
 
     Global.ContentWriter.WriteLine([
-      ProcessorState.Format.Anchor(anchor),
+      ProcessorState.Format.Anchor(anchor, attributes),
       ProcessorState.Format.Section(heading, realDepth)]);
 
     Global.ContentWriter.WriteLine('');

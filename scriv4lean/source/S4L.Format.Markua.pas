@@ -10,12 +10,12 @@ function CreateMarkuaFormat: IFormat;
 implementation
 
 uses
-  System.SysUtils;
+  System.SysUtils, System.StrUtils;
 
 type
   TMarkuaFormatter = class(TInterfacedObject, IFormat)
   public
-    function Anchor(const name: string): string;
+    function Anchor(const name: string; const attributes: string = ''): string;
     function BookPartDelimiter(part: BookPart): TArray<string>;
     function CenteredCaption(const caption: string): TArray<string>;
     function Chapter(const name: string): string;
@@ -41,9 +41,12 @@ end; { CreateMarkuaFormat }
 
 { TMarkuaFormatter }
 
-function TMarkuaFormatter.Anchor(const name: string): string;
+function TMarkuaFormatter.Anchor(const name: string; const attributes: string): string;
 begin
-  Result := '{#' + name + '}';
+  if attributes = '' then
+    Result := '{id: ' + name + '}'
+  else
+    Result := '{' + attributes + ', id: ' + name + '}';
 end; { TMarkuaFormatter.Anchor }
 
 function TMarkuaFormatter.BookPartDelimiter(part: BookPart): TArray<string>;
