@@ -17,7 +17,7 @@ function CreateTODOWriter(const fileName: string): ITODOWriter;
 implementation
 
 uses
-  System.SysUtils, System.Classes,
+  System.SysUtils, System.StrUtils, System.Classes,
   S4L.Writer;
 
 type
@@ -70,10 +70,10 @@ begin
   if path <> FCurrentPath then begin
     if FCurrentPath <> '' then
       FTODOs.Add('');
-    FTODOs.Add(path);
+    FTODOs.Add(IfThen(path.StartsWith('\') and (not path.StartsWith('\\')), '\', '') + path);
     FCurrentPath := path;
   end;
-  FTODOs.Add(todo);
+  FTODOs.Add(': ' + todo);
 
   Result := true;
 end; { TTODOWriter.Add }
