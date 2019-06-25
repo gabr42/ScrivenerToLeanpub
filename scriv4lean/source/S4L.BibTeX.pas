@@ -334,7 +334,7 @@ begin
       if line.StartsWith('}') then
         break; //repeat
 
-      var tagData := line.TrimRight([',']).Split(['=']);
+      var tagData := line.TrimRight([',']).Split(['='], '{', '}');
       if Length(tagData) <> 2 then
         Exit(SetError('Invalid format: ' + line));
 
