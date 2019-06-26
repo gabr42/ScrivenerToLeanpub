@@ -8,7 +8,6 @@ uses
   S4L.Processor.Config;
 
 type
-
   IProcessor = interface(IErrorBase) ['{A800FADD-873D-4931-8B31-87B728C2FEDE}']
     function  GetWarnings: TArray<string>;
     function  Run(options: TProcessorOptions): boolean;
@@ -193,27 +192,16 @@ type
     function Step(var nextState: State): boolean; override;
   end; { TTableProcessor }
 
-  TTemplateProcessor = class(TStateProcessor)
-  strict protected
-    function FillTemplate(template: TStrings;
-      const mapper: TFunc<string, string>): TArray<string>;
-    function ReplaceAllTags(const line: string;
-      const mapper: TFunc<string, string>): string;
-  public
-  end; { TTemplateProcessor }
-
-  TListOfProcessor = class(TTemplateProcessor)
+  TListOfProcessor = class(TStateProcessor)
   strict private
     FBeginMarker: TRegEx;
     FEndMarker  : TRegEx;
-  strict protected
-    function  ReplaceTag(const tag: string; const captionInfo: TCaptionInfo): string;
   public
     procedure AfterConstruction; override;
     function  Step(var nextState: State): boolean; override;
   end; { TListOfProcessor }
 
-  TBibProcessor = class(TTemplateProcessor)
+  TBibProcessor = class(TStateProcessor)
   strict private
     FBeginMarker: TRegEx;
     FEndMarker  : TRegEx;
@@ -242,11 +230,17 @@ type
     FProcessor     : array [State] of IStateProcessor;
     FProcessorState: IProcessorState;
     FWarnings      : TList<string>;
-  strict protected
+  private
+    function  FillTemplate(template: TArray<string>;
+      const mapper: TFunc<string, string>): TArray<string>;
+    function  ReplaceAllTags(const line: string;
+      const mapper: TFunc<string, string>): string; strict protected
+    function  ReplaceTag(const tag: string; const captionInfo: TCaptionInfo): string;
     function  CheckReferences: boolean;
     function  GetWarnings: TArray<string>;
     procedure PostprocessAnchors;
     procedure PostprocessFootEndNotes;
+    procedure PostprocessLists;
     procedure PostprocessMacros;
     procedure PostprocessQuotes;
     procedure ProcessNotes(const startMarker, endMarker: string;
@@ -1237,42 +1231,6 @@ begin
   Result := true;
 end; { TTableProcessor.Step }
 
-{ TTemplateProcessor }
-
-function TTemplateProcessor.FillTemplate(template: TStrings;
-  const mapper: TFunc<string, string>): TArray<string>;
-begin
-  var list := TStringList.Create;
-  try
-    for var line in template do
-      list.Add(ReplaceAllTags(line, mapper));
-    Result := list.ToStringArray;
-  finally FreeAndNil(list); end;
-end; { TTemplateProcessor.FillTemplate }
-
-function TTemplateProcessor.ReplaceAllTags(const line: string;
-  const mapper: TFunc<string, string>): string;
-begin
-  Result := line;
-
-  var pTag := 1;
-  repeat
-    pTag := PosEx('@', Result, pTag);
-    if pTag = 0 then
-      Exit;
-
-    var pEnd := PosEx('@', Result, pTag + 1);
-    if pEnd = 0 then
-      Exit;
-
-    var tag := Copy(Result, pTag + 1, pEnd - pTag - 1);
-    Delete(Result, pTag, pEnd - pTag + 1);
-    var mapped := mapper(tag);
-    Insert(mapped, Result, pTag);
-    pTag := pTag + Length(mapped);
-  until false;
-end; { TTemplateProcessor.ReplaceAllTags }
-
 { TListOfProcessor }
 
 procedure TListOfProcessor.AfterConstruction;
@@ -1281,17 +1239,6 @@ begin
   FBeginMarker := TRegEx.Create(CListOfMarker);
   FEndMarker := TRegEx.Create(CListOfEndMarker);
 end; { TListOfProcessor.AfterConstruction }
-
-function TListOfProcessor.ReplaceTag(const tag: string; const captionInfo: TCaptionInfo):
-  string;
-begin
-  if SameText(tag, CTOFTagCaption) then
-    Result := captionInfo.Caption
-  else if SameText(tag, CTOFTagReference) then
-    Result := captionInfo.Reference
-  else
-    Result := tag;
-end; { TListOfProcessor.ReplaceTag }
 
 function TListOfProcessor.Step(var nextState: State): boolean;
 var
@@ -1303,16 +1250,8 @@ begin
     if not ReadBlock(template, 'Table', FBeginMarker, FEndMarker, tableName, trailer) then
       Exit(false);
 
-    for var captionInfo in ProcessorState.Captions do
-      if SameText(tableName, captionInfo.TableName)
-         and (captionInfo.Caption <> '')
-      then
-        Global.ContentWriter.WriteLine(
-          FillTemplate(template,
-            function (tag: string): string
-            begin
-              Result := ReplaceTag(tag, captionInfo);
-            end));
+    var bookmark := Global.ContentWriter.CreateBookmark;
+    ProcessorState.Lists.Add(TListInfo.Create(tableName, template.ToStringArray, bookmark));
 
     if trailer <> '' then
       Global.ContentWriter.WriteLine(trailer);
@@ -1497,6 +1436,17 @@ begin
   finally FreeAndNil(errors); end;
 end; { TProcessor.CheckReferences }
 
+function TProcessor.FillTemplate(template: TArray<string>;
+  const mapper: TFunc<string, string>): TArray<string>;
+begin
+  var list := TStringList.Create;
+  try
+    for var line in template do
+      list.Add(ReplaceAllTags(line, mapper));
+    Result := list.ToStringArray;
+  finally FreeAndNil(list); end;
+end; { TProcessor.FillTemplate }
+
 function TProcessor.GetWarnings: TArray<string>;
 begin
   Result := FWarnings.ToArray;
@@ -1532,6 +1482,22 @@ begin
       WarningCollector(problem);
   end;
 end; { TProcessor.PostprocessFootEndNotes }
+
+procedure TProcessor.PostprocessLists;
+begin
+  for var listInfo in FProcessorState.Lists do begin
+    for var captionInfo in FProcessorState.Captions do
+      if SameText(listInfo.Name, captionInfo.TableName)
+         and (captionInfo.Caption <> '')
+      then
+        listInfo.Bookmark.WriteLine(
+          FillTemplate(listInfo.Template,
+            function (tag: string): string
+            begin
+              Result := ReplaceTag(tag, captionInfo);
+            end));
+  end;
+end; { TProcessor.PostprocessLists }
 
 procedure TProcessor.PostprocessMacros;
 begin
@@ -1573,6 +1539,40 @@ begin
   end;
 end; { TProcessor.ProcessNotes }
 
+function TProcessor.ReplaceAllTags(const line: string;
+  const mapper: TFunc<string, string>): string;
+begin
+  Result := line;
+
+  var pTag := 1;
+  repeat
+    pTag := PosEx('@', Result, pTag);
+    if pTag = 0 then
+      Exit;
+
+    var pEnd := PosEx('@', Result, pTag + 1);
+    if pEnd = 0 then
+      Exit;
+
+    var tag := Copy(Result, pTag + 1, pEnd - pTag - 1);
+    Delete(Result, pTag, pEnd - pTag + 1);
+    var mapped := mapper(tag);
+    Insert(mapped, Result, pTag);
+    pTag := pTag + Length(mapped);
+  until false;
+end; { TProcessor.ReplaceAllTags }
+
+function TProcessor.ReplaceTag(const tag: string; const captionInfo: TCaptionInfo):
+  string;
+begin
+  if SameText(tag, CTOFTagCaption) then
+    Result := captionInfo.Caption
+  else if SameText(tag, CTOFTagReference) then
+    Result := captionInfo.Reference
+  else
+    Result := tag;
+end; { TProcessor.ReplaceTag }
+
 function TProcessor.Run(options: TProcessorOptions): boolean;
 begin
   FProcessorState.Options := options;
@@ -1582,6 +1582,7 @@ begin
     if not FProcessor[processor].Step(processor) then
       Exit(SetError(FProcessor[processor].ErrorMsg));
 
+  PostprocessLists;
   PostprocessFootEndNotes;
   PostprocessQuotes;
 

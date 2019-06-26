@@ -3,6 +3,7 @@ unit S4L.Processor.State;
 interface
 
 uses
+  System.Generics.Collections,
   S4L.Anchors, S4L.Context, S4L.Images, S4L.References,
   S4L.Writer, S4L.TODOWriter, S4L.Captions, S4L.Format, S4L.Macros, S4L.Notes,
   S4L.Processor.Config;
@@ -13,6 +14,15 @@ type
                  Content, Code, Table, ListOf, Bibliography, Poetry, Quote);
   ContentMode = (BOF, FrontMatter, MainMatter, BackMatter);
   {$SCOPEDENUMS OFF}
+
+  TListInfo = record
+  public
+    Name    : string;
+    Template: TArray<string>;
+    Bookmark: IBookmark;
+    constructor Create(const AName: string; const ATemplate: TArray<string>;
+      const ABookmark: IBookmark);
+  end; { TListInfo }
 
   IProcessorState = interface  ['{B6B5A709-7540-4E33-B2BF-0D5B37B28D1E}']
     function  GetAnchors: IAnchors;
@@ -25,9 +35,10 @@ type
     function  GetLastPartBookmark: IBookmark;
     function  GetLastTableBookmark: IBookmark;
     function  GetLastMetaBookmark: IBookmark;
+    function GetLists: TList<TListInfo>;
     function  GetMacros: IMacros;
     function  GetNotes: INotes;
-    function GetOptions: TProcessorOptions;
+    function  GetOptions: TProcessorOptions;
     function  GetPartCount: integer;
     function  GetReferences: IReferences;
     function  GetTODOWriter: ITODOWriter;
@@ -41,6 +52,7 @@ type
     procedure SetLastPartBookmark(const value: IBookmark);
     procedure SetLastTableBookmark(const value: IBookmark);
     procedure SetLastMetaBookmark(const value: IBookmark);
+    procedure SetLists(const value: TList<TListInfo>);
     procedure SetMacros(const value: IMacros);
     procedure SetNotes(const value: INotes);
     procedure SetOptions(const value: TProcessorOptions);
@@ -58,6 +70,7 @@ type
     property LastMetaBookmark: IBookmark read GetLastMetaBookmark write SetLastMetaBookmark;
     property LastPartBookmark: IBookmark read GetLastPartBookmark write SetLastPartBookmark;
     property LastTableBookmark: IBookmark read GetLastTableBookmark write SetLastTableBookmark;
+    property Lists: TList<TListInfo> read GetLists write SetLists;
     property Macros: IMacros read GetMacros write SetMacros;
     property Notes: INotes read GetNotes write SetNotes;
     property Options: TProcessorOptions read GetOptions write SetOptions;
@@ -69,6 +82,9 @@ type
 function CreateProcessorState: IProcessorState;
 
 implementation
+
+uses
+  System.SysUtils;
 
 type
   TProcessorState = class(TInterfacedObject, IProcessorState)
@@ -83,6 +99,7 @@ type
     FLastPartBookmark : IBookmark;
     FLastTableBookmark: IBookmark;
     FLastMetaBookmark : IBookmark;
+    FLists: TList<TListInfo>;
     FMacros           : IMacros;
     FNotes            : INotes;
     FOptions          : TProcessorOptions;
@@ -100,6 +117,7 @@ type
     function  GetLastPartBookmark: IBookmark;
     function  GetLastTableBookmark: IBookmark;
     function  GetLastMetaBookmark: IBookmark;
+    function GetLists: TList<TListInfo>;
     function  GetMacros: IMacros;
     function  GetNotes: INotes;
     function  GetOptions: TProcessorOptions;
@@ -116,6 +134,7 @@ type
     procedure SetLastPartBookmark(const value: IBookmark);
     procedure SetLastTableBookmark(const value: IBookmark);
     procedure SetLastMetaBookmark(const value: IBookmark);
+    procedure SetLists(const value: TList<TListInfo>);
     procedure SetMacros(const value: IMacros);
     procedure SetNotes(const value: INotes);
     procedure SetOptions(const value: TProcessorOptions);
@@ -123,6 +142,8 @@ type
     procedure SetReferences(const value: IReferences);
     procedure SetTODOWriter(const value: ITODOWriter);
   public
+    constructor Create;
+    destructor  Destroy; override;
     property Anchors: IAnchors read GetAnchors write SetAnchors;
     property Captions: ICaptions read GetCaptions write SetCaptions;
     property ChapterCount: integer read GetChapterCount write SetChapterCount;
@@ -133,6 +154,7 @@ type
     property LastMetaBookmark: IBookmark read GetLastMetaBookmark write SetLastMetaBookmark;
     property LastPartBookmark: IBookmark read GetLastPartBookmark write SetLastPartBookmark;
     property LastTableBookmark: IBookmark read GetLastTableBookmark write SetLastTableBookmark;
+    property Lists: TList<TListInfo> read GetLists write SetLists;
     property Macros: IMacros read GetMacros write SetMacros;
     property Notes: INotes read GetNotes write SetNotes;
     property Options: TProcessorOptions read GetOptions write SetOptions;
@@ -149,6 +171,18 @@ begin
 end; { CreateProcessorState }
 
 { TProcessorState }
+
+constructor TProcessorState.Create;
+begin
+  inherited;
+  FLists := TList<TListInfo>.Create;
+end; { TProcessorState.Create }
+
+destructor TProcessorState.Destroy;
+begin
+  FreeAndNil(FLists);
+  inherited;
+end; { TProcessorState.Destroy }
 
 function TProcessorState.GetAnchors: IAnchors;
 begin
@@ -199,6 +233,11 @@ function TProcessorState.GetLastMetaBookmark: IBookmark;
 begin
   Result := FLastMetaBookmark;
 end; { TProcessorState.GetLastMetaBookmark }
+
+function TProcessorState.GetLists: TList<TListInfo>;
+begin
+  Result := FLists;
+end; { TProcessorState.GetLists }
 
 function TProcessorState.GetMacros: IMacros;
 begin
@@ -280,6 +319,11 @@ begin
   FLastMetaBookmark := value;
 end; { TProcessorState.SetLastMetaBookmark }
 
+procedure TProcessorState.SetLists(const value: TList<TListInfo>);
+begin
+  FLists := value;
+end; { TProcessorState.SetLists }
+
 procedure TProcessorState.SetMacros(const value: IMacros);
 begin
   FMacros := value;
@@ -309,5 +353,13 @@ procedure TProcessorState.SetTODOWriter(const value: ITODOWriter);
 begin
   FTODOWriter := value;
 end; { TProcessorState.SetTODOWriter }
+
+constructor TListInfo.Create(const AName: string;
+  const ATemplate: TArray<string>; const ABookmark: IBookmark);
+begin
+  Name := AName;
+  Template := ATemplate;
+  Bookmark := ABookmark;
+end; { TListInfo.Create }
 
 end.
