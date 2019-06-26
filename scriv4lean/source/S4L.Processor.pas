@@ -1283,9 +1283,8 @@ begin
     if not assigned(Global.BibTeX) then
       Exit(SetError('BibTeX file was not specified'));
 
-    Global.ContentWriter.WriteLine(
-      Global.BibTeX.CreateBibliography(template.ToStringArray,
-        optNumberCitations in ProcessorState.Options));
+    var bookmark := Global.ContentWriter.CreateBookmark;
+    ProcessorState.Lists.Add(TListInfo.Create('*', template.ToStringArray, bookmark));
 
     if trailer <> '' then
       Global.ContentWriter.WriteLine(trailer);
@@ -1486,16 +1485,23 @@ end; { TProcessor.PostprocessFootEndNotes }
 procedure TProcessor.PostprocessLists;
 begin
   for var listInfo in FProcessorState.Lists do begin
-    for var captionInfo in FProcessorState.Captions do
-      if SameText(listInfo.Name, captionInfo.TableName)
-         and (captionInfo.Caption <> '')
-      then
-        listInfo.Bookmark.WriteLine(
-          FillTemplate(listInfo.Template,
-            function (tag: string): string
-            begin
-              Result := ReplaceTag(tag, captionInfo);
-            end));
+    if listInfo.Name = '*' then
+      // Bibliography
+      listInfo.Bookmark.WriteLine(
+        FGlobal.BibTeX.CreateBibliography(listInfo.Template,
+          optNumberCitations in FProcessorState.Options))
+    else
+      // List of ...
+      for var captionInfo in FProcessorState.Captions do
+        if SameText(listInfo.Name, captionInfo.TableName)
+           and (captionInfo.Caption <> '')
+        then
+          listInfo.Bookmark.WriteLine(
+            FillTemplate(listInfo.Template,
+              function (tag: string): string
+              begin
+                Result := ReplaceTag(tag, captionInfo);
+              end));
   end;
 end; { TProcessor.PostprocessLists }
 
