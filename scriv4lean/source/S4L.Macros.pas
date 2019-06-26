@@ -22,7 +22,7 @@ function CreateMacros(const global: IGlobal): IMacros;
 implementation
 
 uses
-  System.SysUtils, System.Classes, System.RegularExpressions,
+  System.SysUtils, System.Math, System.Classes, System.RegularExpressions,
   System.Generics.Defaults, System.Generics.Collections,
   S4L.Reader;
 
@@ -87,7 +87,12 @@ constructor TMacros.Create(const global: IGlobal);
 begin
   inherited Create;
   FGlobal := global;
-  FMacroMatcher := TRegEx.Create('<@([a-zA-Z]):([^>]*)>');
+  FMacroMatcher := TRegEx.Create(
+    '<@([a-zA-Z]):'                          +
+    '([^>"“”]*'                              +
+     '|'                                     +
+     '[^>"“”]*=["“”]([^\"“”]|\\["“”])*["“”]' +
+    ')>');
   FReferenceMatcher := TRegEx.Create('<@r:([^>]*)>');
   FIncludeMatcher := TRegEx.Create('<@I:([^>]*)>');
   FDispatcher['a'] := AnchorMacro;
@@ -177,7 +182,7 @@ begin
   else if SameText(param[1], CThisSection) then
     FReplacements.AddOrSetValue('$' + param[0], FSectionName)
   else
-    FReplacements.AddOrSetValue(param[0], param[1]);
+    FReplacements.AddOrSetValue(param[0], param[1].Trim(['"','“','”']));
   replacement := '';
 
   Result := true;
@@ -291,7 +296,7 @@ begin
     if not match.Success then
       break; //repeat
 
-    if (match.Groups.Count <> 3) or (match.Groups[1].Value = '') then
+    if (match.Groups.Count < 3) or (match.Groups[1].Value = '') then
       Exit(SetError('Malformed macro: ' + match.Value));
 
     if (Length(match.Groups[1].Value) <> 1)
@@ -308,7 +313,7 @@ begin
     Delete(line, match.Index, match.Length);
     Insert(replacement, line, match.Index);
 
-    startPos := match.Index + Length(replacement);
+    startPos := match.Index + IfThen(replacement <> match.Value, 0, Length(replacement));
   until false;
 
   Result := true;

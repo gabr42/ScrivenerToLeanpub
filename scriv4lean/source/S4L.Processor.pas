@@ -679,6 +679,9 @@ begin
       Exit(SetError('Expected Part/Chapter/Appendix marker, got: %s', [line]));
   end;
 
+  if (ErrorMsg <> '') and (line <> '') then
+    Exit(false);
+
   nextState := State.EOF;
   Result := true;
 end; { THeadingProcessor.Step }
