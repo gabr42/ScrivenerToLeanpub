@@ -285,7 +285,7 @@ begin
   FReferenceMatcher := TRegEx.Create(
     '(?<reference>'
       + '(?<!\\)\[(?<caption>[^\[\]]*?[^\\]?)\]'
-      + '\((?<anchor>.*?)\)'
+      + '(?:(?:\((?<anchor1>.*?)\))|(?:<(?<anchor2>.*?)>))'
     + ')');
   FEOLCaptionMatcher := TRegEx.Create('\[([^\]\]]+)\]\s*$');
 end; { TStateProcessor.Create }
@@ -533,17 +533,17 @@ end; { TStateProcessor.ReadOneBlock }
 
 procedure TStateProcessor.RecordReferences(var line: string);
 begin
-
-  if Pos('[<@r:?appendix_autoNumbering>](<@r:#appendix_autoNumbering>)', line) > 0 then
-    sleep(0);
-
   var startPos := 1;
   repeat
     var match := FReferenceMatcher.Match(line, startPos);
     if not match.Success then
       Exit;
 
-    var anchor := match.Groups['anchor'].Value;
+    var anchor: string;
+    if match.Groups['anchor1'].Success and (match.Groups['anchor1'].Value <> '') then
+      anchor := match.Groups['anchor1'].Value
+    else
+      anchor := match.Groups['anchor2'].Value;
     if (anchor = '') or anchor.StartsWith('#') then begin
       startPos := match.Index + match.Length;
       continue; //repeat
