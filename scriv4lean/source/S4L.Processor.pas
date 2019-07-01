@@ -871,7 +871,8 @@ begin
   caption := Copy(caption, matchStart.Index + matchStart.Length,
                            matchEnd.Index - matchStart.Index - matchStart.Length);
 
-  ProcessorState.Captions.Add(caption, anchor, matchStart.Groups[1].Value);
+  ProcessorState.Captions.Add(caption.Split(['. '])[0].Trim(['.']) + '.',
+    anchor, matchStart.Groups[1].Value);
 
   Result := true;
 end; { TContentProcessor.FilterCaption }
