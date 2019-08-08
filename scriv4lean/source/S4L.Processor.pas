@@ -238,7 +238,7 @@ type
     function  ReplaceTag(const tag: string; const captionInfo: TCaptionInfo): string;
     function  CheckReferences: boolean;
     function  GetWarnings: TArray<string>;
-    procedure PostprocessAnchors;
+    procedure PostprocessMetas;
     procedure PostprocessFootEndNotes;
     procedure PostprocessLists;
     procedure PostprocessMacros;
@@ -1452,19 +1452,25 @@ begin
   Result := FWarnings.ToArray;
 end; { TProcessor.GetWarnings }
 
-procedure TProcessor.PostprocessAnchors;
+procedure TProcessor.PostprocessMetas;
 begin
   FGlobal.ContentWriter.ForEachLine(
     procedure (var line, nextLine: string)
     begin
-      if TStateProcessor.IsMeta(line) and TStateProcessor.IsMeta(nextLine)
-         and (line[2] = '#') and (nextLine[2] <> '#')
-      then begin
-        Insert(', id: ' + Copy(line, 3, Length(line) - 3), nextLine, Length(nextLine));
-        line := '';
-      end;
+      if TStateProcessor.IsMeta(line) and TStateProcessor.IsMeta(nextLine) then
+        if (line[2] = '#') and (nextLine[2] <> '#') then begin
+          Insert(', id: ' + Copy(line, 3, Length(line) - 3), nextLine, Length(nextLine));
+          line := '';
+        end
+        else if (line[2] <> '#') and (nextLine[2] <> '#')
+                and (not SameText(line, '{exercise}'))
+                and (not SameText(line, '{quiz}'))
+        then begin
+          Insert(', ' + Copy(line, 2, Length(line) - 2), nextLine, Length(nextLine));
+          line := '';
+        end;
     end);
-end; { TProcessor.PostprocessAnchors }
+end; { TProcessor.PostprocessMetas }
 
 procedure TProcessor.PostprocessFootEndNotes;
 begin
@@ -1597,7 +1603,7 @@ begin
   FProcessorState.TODOWriter := nil;
 
   PostprocessMacros;
-  PostprocessAnchors;
+  PostprocessMetas;
 
   Result := CheckReferences;
 end; { TProcessor.Run }

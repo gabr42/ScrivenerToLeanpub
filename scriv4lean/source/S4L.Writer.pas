@@ -323,8 +323,10 @@ begin
       line := sl[i];
       nextLine := sl[i+1];
       processor(line, nextLine);
-      if (sl[i] <> '') and (line = '') then
-        sl.Delete(i)
+      if (sl[i] <> '') and (line = '') then begin
+        sl.Delete(i);
+        sl[i] := nextline;
+      end
       else begin
         sl[i] := line;
         sl[i+1] := nextLine;
