@@ -70,7 +70,7 @@ begin
   if path <> FCurrentPath then begin
     if FCurrentPath <> '' then
       FTODOs.Add('');
-    FTODOs.Add(IfThen(path.StartsWith('\') and (not path.StartsWith('\\')), '\', '') + path);
+    FTODOs.Add({IfThen(path.StartsWith('\') and (not path.StartsWith('\\')), '\', '') +} path);
     FCurrentPath := path;
   end;
   FTODOs.Add(': ' + todo);

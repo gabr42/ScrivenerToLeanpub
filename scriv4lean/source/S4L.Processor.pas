@@ -108,7 +108,7 @@ type
   public
     constructor Create(const global: IGlobal; processorState: IProcessorState;
       const warningHook: TProc<string>); virtual;
-    function  GetLine(var line: string): boolean;
+    function  GetLine(var line: string; skipPreprocessing: boolean = false): boolean;
     class function IsMeta(const s: string): boolean;
     function  ReadBlock(template: TStrings; const tableName: string;
       const beginMarker, endMarker: TRegEx; var name, trailer: string): boolean;
@@ -347,6 +347,9 @@ begin
     var todo := Copy(line, pStart + Length(CTODOMarker), pEnd - pStart - Length(CTODOMarker));
     Delete(line, pStart, pEnd - pStart + Length(CTODOEndMarker));
 
+    RecordReferences(todo);
+    ProcessCitations(todo);
+
     if not ProcessorState.TODOWriter.Add(ProcessorState.Context.Path, todo) then
       Exit(SetError(ProcessorState.TODOWriter.ErrorMsg));
   until false;
@@ -363,10 +366,13 @@ begin
   Insert(blockStyle.Value, line, 1);
 end; { TStateProcessor.FixWeirdness }
 
-function TStateProcessor.GetLine(var line: string): boolean;
+function TStateProcessor.GetLine(var line: string; skipPreprocessing: boolean): boolean;
 begin
   if not Global.ScrivenerReader.GetLine(line) then
     Exit(false);
+
+  if skipPreprocessing then
+    Exit(true);
 
   if not ProcessorState.Macros.Process(line) then
     Exit(SetError(ProcessorState.Macros.ErrorMsg));
@@ -732,7 +738,7 @@ begin
 
   var nextLine: string;
   var attributes := '';
-  if GetLine(nextLine) then begin
+  if GetLine(nextLine, true) then begin
     nextLine := Trim(nextLine);
     if nextLine.StartsWith('{#') and nextLine.EndsWith('}') then begin
       anchor := Copy(nextLine, 3, Length(nextLine) - 3);
@@ -904,7 +910,7 @@ begin
     var anchor := MakeAnchor(heading);
     var nextLine: string; { TODO : This code has lots in common with TBaseChapterProcessor.StartChapter - unify }
     var attributes := '';
-    if GetLine(nextLine) then begin
+    if GetLine(nextLine, true) then begin
       nextLine := Trim(nextLine);
       if nextLine.StartsWith('{#') and nextLine.EndsWith('}') then begin
         anchor := Copy(nextLine, 3, Length(nextLine) - 3);

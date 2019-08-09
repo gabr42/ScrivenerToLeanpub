@@ -65,7 +65,7 @@ type
 
 procedure Usage;
 begin
-  Writeln('scriv4lean v0.2.2');
+  Writeln('scriv4lean v0.2.3');
   Writeln;
   Writeln('Usage:');
   for var s in CommandLineParser.Usage do

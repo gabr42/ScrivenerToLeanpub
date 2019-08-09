@@ -59,7 +59,7 @@ end; { TContext.Add }
 
 function TContext.Path: string;
 begin
-  Result := '\' + string.Join('\', FBreadcrumbs.ToArray);
+  Result := '\\' + string.Join('\\', FBreadcrumbs.ToArray);
 end; { TContext.Path }
 
 end.
