@@ -623,6 +623,96 @@
             <Prefix><![CDATA[*]]></Prefix>
             <Suffix><![CDATA[*]]></Suffix>
         </Style>
+        <Style Name="Markua:B" ID="BAFB35F3-3020-4AD6-A5D3-B628DBD7E06C" Type="Char">
+            <Format><![CDATA[{\rtf1\ansi\ansicpg1252\uc1\deff0
+{\fonttbl{\f0\fmodern\fcharset0\fprq2 Calibri;}}
+{\colortbl;\red0\green0\blue0;\red255\green255\blue255;\red128\green128\blue128;}
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\fet2\ftnbj\aenddoc
+\pgnrestart\pgnstarts0
+\pard\plain \tx0\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl262\slmult1\ltrch\loch {\f0\fs26\b1 Attributes}}]]></Format>
+            <Prefix><![CDATA[**]]></Prefix>
+            <Suffix><![CDATA[**]]></Suffix>
+        </Style>
+        <Style Name="Markua:BI" ID="73028D2F-A42B-4066-BCD0-403907A077F8" Type="Char">
+            <Format><![CDATA[{\rtf1\ansi\ansicpg1252\uc1\deff0
+{\fonttbl{\f0\fmodern\fcharset0\fprq2 Calibri;}}
+{\colortbl;\red0\green0\blue0;\red255\green255\blue255;\red128\green128\blue128;}
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\fet2\ftnbj\aenddoc
+\pgnrestart\pgnstarts0
+\pard\plain \tx0\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl262\slmult1\ltrch\loch {\f0\fs26\b1\i1 Attributes}}]]></Format>
+            <Prefix><![CDATA[***]]></Prefix>
+            <Suffix><![CDATA[***]]></Suffix>
+        </Style>
+        <Style Name="Markua:BIU" ID="BE0F8772-974E-4D02-978F-B6E214912524" Type="Char">
+            <Format><![CDATA[{\rtf1\ansi\ansicpg1252\uc1\deff0
+{\fonttbl{\f0\fmodern\fcharset0\fprq2 Calibri;}}
+{\colortbl;\red0\green0\blue0;\red255\green255\blue255;\red128\green128\blue128;}
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\fet2\ftnbj\aenddoc
+\pgnrestart\pgnstarts0
+\pard\plain \tx0\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl262\slmult1\ltrch\loch {\f0\fs26\b1\i1\ul\ulc0 Attributes}}]]></Format>
+            <Prefix><![CDATA[____]]></Prefix>
+            <Suffix><![CDATA[____]]></Suffix>
+        </Style>
+        <Style Name="Markua:BU" ID="62469184-67F7-41D0-9859-9784C6615E87" Type="Char">
+            <Format><![CDATA[{\rtf1\ansi\ansicpg1252\uc1\deff0
+{\fonttbl{\f0\fmodern\fcharset0\fprq2 Calibri;}}
+{\colortbl;\red0\green0\blue0;\red255\green255\blue255;\red128\green128\blue128;}
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\fet2\ftnbj\aenddoc
+\pgnrestart\pgnstarts0
+\pard\plain \tx0\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl262\slmult1\ltrch\loch {\f0\fs26\b1\ul\ulc0 Attributes}}]]></Format>
+            <Prefix><![CDATA[___]]></Prefix>
+            <Suffix><![CDATA[___]]></Suffix>
+        </Style>
+        <Style Name="Markua:I" ID="E92056D8-3945-4BED-A8F3-C9B96CA3CDEA" Type="Char">
+            <Format><![CDATA[{\rtf1\ansi\ansicpg1252\uc1\deff0
+{\fonttbl{\f0\fmodern\fcharset0\fprq2 Calibri;}}
+{\colortbl;\red0\green0\blue0;\red255\green255\blue255;\red128\green128\blue128;}
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\fet2\ftnbj\aenddoc
+\pgnrestart\pgnstarts0
+\pard\plain \tx0\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl262\slmult1\ltrch\loch {\f0\fs26\i1 Attributes}}]]></Format>
+            <Prefix><![CDATA[*]]></Prefix>
+            <Suffix><![CDATA[*]]></Suffix>
+        </Style>
+        <Style Name="Markua:ST" ID="BCA79775-B0C8-46D2-8507-945F44BBFB26" Type="Char">
+            <Format><![CDATA[{\rtf1\ansi\ansicpg1252\uc1\deff0
+{\fonttbl{\f0\fmodern\fcharset0\fprq2 Calibri;}}
+{\colortbl;\red0\green0\blue0;\red255\green255\blue255;\red128\green128\blue128;}
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\fet2\ftnbj\aenddoc
+\pgnrestart\pgnstarts0
+\pard\plain \tx0\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl262\slmult1\ltrch\loch {\f0\fs26\b0\strike\strikec0 Attributes}}]]></Format>
+            <Prefix><![CDATA[~~]]></Prefix>
+            <Suffix><![CDATA[~~]]></Suffix>
+        </Style>
+        <Style Name="Markua:Sub" ID="41C33163-D594-42F9-A1A8-E49AC1B78207" Type="Char">
+            <Format><![CDATA[{\rtf1\ansi\ansicpg1252\uc1\deff0
+{\fonttbl{\f0\fmodern\fcharset0\fprq2 Calibri;}}
+{\colortbl;\red0\green0\blue0;\red255\green255\blue255;\red128\green128\blue128;}
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\fet2\ftnbj\aenddoc
+\pgnrestart\pgnstarts0
+\pard\plain \tx0\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl262\slmult1\ltrch\loch {\f0\fs26\b0 Attributes}}]]></Format>
+            <Prefix><![CDATA[~]]></Prefix>
+            <Suffix><![CDATA[~]]></Suffix>
+        </Style>
+        <Style Name="Markua:Sup" ID="1F9DB23F-2F71-4643-9FD2-3AC721C541B5" Type="Char">
+            <Format><![CDATA[{\rtf1\ansi\ansicpg1252\uc1\deff0
+{\fonttbl{\f0\fmodern\fcharset0\fprq2 Calibri;}}
+{\colortbl;\red0\green0\blue0;\red255\green255\blue255;\red128\green128\blue128;}
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\fet2\ftnbj\aenddoc
+\pgnrestart\pgnstarts0
+\pard\plain \tx0\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl262\slmult1\ltrch\loch {\f0\fs26\b0 Attributes}}]]></Format>
+            <Prefix><![CDATA[^]]></Prefix>
+            <Suffix><![CDATA[^]]></Suffix>
+        </Style>
+        <Style Name="Markua:U" ID="D91EA907-8EF6-4672-B305-CF439EA384F6" Type="Char">
+            <Format><![CDATA[{\rtf1\ansi\ansicpg1252\uc1\deff0
+{\fonttbl{\f0\fmodern\fcharset0\fprq2 Calibri;}}
+{\colortbl;\red0\green0\blue0;\red255\green255\blue255;\red128\green128\blue128;}
+\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\fet2\ftnbj\aenddoc
+\pgnrestart\pgnstarts0
+\pard\plain \tx0\tx360\tx720\tx1080\tx1440\tx1800\tx2160\tx2880\tx3600\tx4320\fi360\sl262\slmult1\ltrch\loch {\f0\fs26\ul\ulc0 Attributes}}]]></Format>
+            <Prefix><![CDATA[_]]></Prefix>
+            <Suffix><![CDATA[_]]></Suffix>
+        </Style>
         <Style Name="[scriv4lean] Bibliography" ID="52D7F5C9-DB79-4417-B65F-CB1FAEA7961B" Type="Para+Char" FontChange="Face+Size">
             <Format><![CDATA[{\rtf1\ansi\ansicpg1252\uc1\deff0
 {\fonttbl{\f0\fnil\fcharset0\fprq2 Segoe UI;}}
