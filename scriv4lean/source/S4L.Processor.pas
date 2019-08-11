@@ -281,7 +281,7 @@ begin
   FBibMarker := TRegEx.Create(CBibMarker);
   FPoetryMarker := TRegEx.Create(CPoetryMarker);
   FWeirdMatcher := TRegEx.Create('^<\$leanpub:.*>(?<blockStyle>{(blurb|aside|blockquote)})');
-  FCitationMatcher := TRegEx.Create('\[([A-Za-z0-9]+)\](?![(\]])');
+  FCitationMatcher := TRegEx.Create('\[(?<citation>[A-Za-z0-9]+)(:(?<field>[A-Za-z0-9]+))?\](?![(\]])');
   FReferenceMatcher := TRegEx.Create(
     '(?<reference>'
       + '(?<!\\)\[(?<caption>[^\[\]]*?[^\\]?)\]'
@@ -447,16 +447,27 @@ begin
     if not match.Success then
       break; //repeat
 
-    var citationKey := match.Groups[1].Value;
+    var citationKey := match.Groups['citation'].Value;
+    var field: string := '';
+    if (match.Groups.Count >= 3) and (match.Groups['field'].Success) then
+      field := match.Groups['field'].Value;
+
     var anchor: string;
     if not Global.BibTeX.HasCitation(citationKey, anchor) then
       Inc(startPos, match.Length)
     else begin
-      if optCheckURLs in ProcessorState.Options then
-        Global.URLChecker.Add(Global.BibTeX.GetCitationURL(citationKey));
-      if optNumberCitations in ProcessorState.Options then
-        citationKey := Global.BibTeX.GetCitationNumber(citationKey).ToString;
-      var citation := ProcessorState.Format.Reference('[' + citationKey + ']', anchor);
+      var citation := '';
+
+      if field <> '' then
+        citation := Global.BibTeX.GetCitationTag(citationKey, field, true)
+      else begin
+        if optCheckURLs in ProcessorState.Options then
+          Global.URLChecker.Add(Global.BibTeX.GetCitationURL(citationKey));
+        if optNumberCitations in ProcessorState.Options then
+          citationKey := Global.BibTeX.GetCitationNumber(citationKey).ToString;
+        citation := ProcessorState.Format.Reference('[' + citationKey + ']', anchor);
+      end;
+
       Delete(line, match.Index, match.Length);
       Insert(citation, line, match.Index);
       Inc(startPos, Length(citation));
@@ -515,6 +526,12 @@ begin
   line := line.Remove(0, matchStart.Length);
 
   repeat
+    if line.StartsWith('#') then begin
+      var addDepth := line.Split([' '])[0].Length;
+      line := line.Remove(0, addDepth).TrimLeft([' ']);
+      line := ProcessorState.Format.Section(line, ProcessorState.Context.Depth + addDepth);
+    end;
+
     RecordReferences(line);
     ProcessCitations(line);
 
@@ -705,7 +722,7 @@ begin
 
   Global.ContentWriter.WriteLine(ProcessorState.Format.Part(line));
   Global.ContentWriter.WriteLine('');
-  ProcessorState.Context.Add(line, 1);
+//  ProcessorState.Context.Add(line, 1);
 
   nextState := State.Content;
   Result := true;
@@ -761,7 +778,7 @@ begin
     ProcessorState.Format.Anchor(anchor, attributes),
     ProcessorState.Format.Chapter(filteredLine)]);
   Global.ContentWriter.WriteLine('');
-  ProcessorState.Context.Add(filteredLine, 1 + IfThen(ProcessorState.PartCount > 0, 1, 0));
+  ProcessorState.Context.Add(filteredLine, 1 {+ IfThen(ProcessorState.PartCount > 0, 1, 0)});
 
   nextState := State.Content;
   Result := true;
@@ -826,12 +843,12 @@ end; { TBackMatterProcessor.Step }
 
 procedure TContentProcessor.AfterConstruction;
 begin
-  FSectionMatcher := TRegEx.Create('^(#+)\s*(.*) #+$');
   FImageMatcher := TRegEx.Create(
     '(?<reference>'
       + '(?<!\\)!\[(?<caption>[^\[\]]*?[^\\]?)\]'
       + '\[(?<imageref>.*?)\]'
     + ')');
+  FSectionMatcher := TRegEx.Create('^(#+)\s*(.*) #+$');
   FResourceMatcher := TRegEx.Create('^\[(?<reference>[^\^].*?)\]:\s*(?<resource>.*)$');
   FTableMatcher := TRegEx.Create('^({[^}]*?})?\|.*\|$');
   FCaptionMatcher := TRegEx.Create(CCaptionMarker);
@@ -933,7 +950,7 @@ begin
     Global.ContentWriter.WriteLine('');
     if not ProcessorState.Anchors.Add(heading, anchor, Global.ScrivenerReader.CurrentLine) then
       AddWarning(ProcessorState.Anchors.ErrorMsg);
-    ProcessorState.Context.Add(heading, depth);
+    ProcessorState.Context.Add(heading, realDepth);
   end;
 end; { TContentProcessor.IsSection }
 

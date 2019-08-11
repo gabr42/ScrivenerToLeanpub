@@ -4,8 +4,11 @@ interface
 
 type
   IContext = interface ['{2E04273F-57EF-4916-8CFB-A8062534DD7E}']
+    function  GetDepth: integer;
+  //
     procedure Add(const heading: string; depth: integer);
     function  Path: string;
+    property Depth: integer read GetDepth;
   end; { IContext }
 
 function CreateContext: IContext;
@@ -20,11 +23,14 @@ type
   TContext = class(TInterfacedObject, IContext)
   strict private
     FBreadcrumbs: TList<string>;
+  strict protected
+    function  GetDepth: integer;
   public
     constructor Create;
     destructor  Destroy; override;
     procedure Add(const heading: string; depth: integer);
     function  Path: string;
+    property Depth: integer read GetDepth;
   end; { TContext }
 
 { export }
@@ -56,6 +62,11 @@ begin
   while FBreadcrumbs.Count > depth do
     FBreadcrumbs.Delete(FBreadcrumbs.Count - 1);
 end; { TContext.Add }
+
+function TContext.GetDepth: integer;
+begin
+  Result := FBreadcrumbs.Count;
+end; { TContext.GetDepth }
 
 function TContext.Path: string;
 begin

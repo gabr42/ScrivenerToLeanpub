@@ -10,6 +10,7 @@ type
     function  CreateBibliography(const template: TArray<string>;
       orderByAppearance: boolean): TArray<string>;
     function  GetCitationNumber(const citationKey: string): integer;
+    function  GetCitationTag(const citationKey, field: string; prettyPrint: boolean): string;
     function  GetCitationURL(const citationKey: string): string;
     function  HasCitation(const citationKey: string; var citationAnchor: string): boolean;
     function  Read(const fileName: string): boolean;
@@ -68,6 +69,7 @@ type
     function  FilterConditionals(const line: string; const item: TBibTeXItem): string;
     function  ItemKeys: TArray<string>;
     function  MakeAnchor(const citationKey: string): string;
+    function  NormalizeAuthors(const authors: string): string;
     function  ParseTemplate(const template: TArray<string>;
       templates: TDictionary<string, TArray<string>>): boolean;
     function  ReadItem: boolean;
@@ -78,6 +80,7 @@ type
     function  CreateBibliography(const template: TArray<string>;
       orderByUseIndex: boolean): TArray<string>;
     function  GetCitationNumber(const citationKey: string): integer;
+    function  GetCitationTag(const citationKey, field: string; prettyPrint: boolean): string;
     function  GetCitationURL(const citationKey: string): string;
     function  HasCitation(const citationKey: string; var citationAnchor: string): boolean;
     function  Read(const fileName: string): boolean;
@@ -228,6 +231,18 @@ begin
   Inc(Result);
 end; { BibTeX.GetCitationNumber }
 
+function TBibTeX.GetCitationTag(const citationKey, field: string; prettyPrint: boolean): string;
+begin
+  for var item in FItems do
+    if SameText(item.CitationKey, citationKey) then begin
+      if not item.Tags.TryGetValue(field, Result) then
+        Result := ''
+      else if prettyPrint then
+        if SameText(field, 'author') then
+          Result := NormalizeAuthors(Result);
+    end;
+end; { TBibTeX.GetCitationTag }
+
 function TBibTeX.GetCitationURL(const citationKey: string): string;
 begin
   Result := '';
@@ -265,6 +280,15 @@ function TBibTeX.MakeAnchor(const citationKey: string): string;
 begin
   Result := 'scriv4lean-biblio-' + citationKey;
 end; { TBibTeX.MakeAnchor }
+
+function TBibTeX.NormalizeAuthors(const authors: string): string;
+begin
+  var p := Pos(',', authors);
+  if p <= 0 then
+    Result := authors
+  else
+    Result := Copy(authors, p+1).Trim + ' ' + Copy(authors, 1, p-1).Trim;
+end; {BibTeX.NormalizeAuthors }
 
 function TBibTeX.ParseTemplate(const template: TArray<string>;
   templates: TDictionary<string, TArray<string>>): boolean;
